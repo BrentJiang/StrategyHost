@@ -1,4 +1,4 @@
-#include "framework/main_common.h"
+#include "framework/main_framework.h"
 
 #include <iostream>
 #include <memory>
@@ -26,6 +26,19 @@
 #endif
 
 namespace Envoy {
+
+Server::DrainManagerPtr FrameworkComponentFactory::createDrainManager(Server::Instance& server) {
+  // The global drain manager only triggers on listener modification, which effectively is
+  // hot restart at the global level. The per-listener drain managers decide whether to
+  // to include /healthcheck/fail status.
+  return std::make_unique<Server::DrainManagerImpl>(server,
+                                                    envoy::api::v2::Listener_DrainType_MODIFY_ONLY);
+}
+
+Runtime::LoaderPtr FrameworkComponentFactory::createRuntime(Server::Instance& server,
+                                                       Server::Configuration::Initial& config) {
+  return Server::InstanceUtil::createRuntime(server, config);
+}
 
 StrategyHostCommonBase::StrategyHostCommonBase(const OptionsImpl& options, Event::TimeSystem& time_system,
                                ListenerHooks& listener_hooks,
@@ -65,7 +78,7 @@ StrategyHostCommonBase::StrategyHostCommonBase(const OptionsImpl& options, Event
 
     stats_store_ = std::make_unique<Stats::ThreadLocalStoreImpl>(stats_allocator_);
 
-    server_ = std::make_unique<StrategyHost::InstanceImpl>(
+    server_ = std::make_unique<StrategyHost::StrategyHostInstanceImpl>(
         options_, time_system, local_address, listener_hooks, *restarter_, *stats_store_,
         access_log_lock, component_factory, std::move(random_generator), *tls_, thread_factory_,
         file_system_, std::move(process_context));

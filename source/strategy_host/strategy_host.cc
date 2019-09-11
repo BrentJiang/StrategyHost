@@ -52,7 +52,7 @@ StrategyHostInstanceImpl::StrategyHostInstanceImpl(const Server::Options& option
                            Network::Address::InstanceConstSharedPtr local_address,
                            ListenerHooks& hooks, Server::HotRestart& restarter, Stats::StoreRoot& store,
                            Thread::BasicLockable& access_log_lock,
-                           ComponentFactory& component_factory,
+                           Server::ComponentFactory& component_factory,
                            Runtime::RandomGeneratorPtr&& random_generator,
                            ThreadLocal::Instance& tls, Thread::ThreadFactory& thread_factory,
                            Filesystem::Instance& file_system,
@@ -156,18 +156,6 @@ MetricSnapshotImpl::MetricSnapshotImpl(Stats::Store& store) {
   }
 }
 
-void InstanceUtil::flushMetricsToSinks(const std::list<Stats::SinkPtr>& sinks,
-                                       Stats::Store& store) {
-  // Create a snapshot and flush to all sinks.
-  // NOTE: Even if there are no sinks, creating the snapshot has the important property that it
-  //       latches all counters on a periodic basis. The hot restart code assumes this is being
-  //       done so this should not be removed.
-  MetricSnapshotImpl snapshot(store);
-  for (const auto& sink : sinks) {
-    sink->flush(snapshot);
-  }
-}
-
 void StrategyHostInstanceImpl::flushStats() {
   ENVOY_LOG(debug, "flushing stats");
   // If Envoy is not fully initialized, workers will not be started and mergeHistograms
@@ -199,7 +187,7 @@ void StrategyHostInstanceImpl::flushStatsInternal() {
       sslContextManager().daysUntilFirstCertExpires());
   server_stats_->state_.set(
       enumToInt(Server::Utility::serverState(initManager().state(), healthCheckFailed())));
-  InstanceUtil::flushMetricsToSinks(config_.statsSinks(), stats_store_);
+  Server::InstanceUtil::flushMetricsToSinks(config_.statsSinks(), stats_store_);
   // TODO(ramaraochavali): consider adding different flush interval for histograms.
   if (stat_flush_timer_ != nullptr) {
     stat_flush_timer_->enableTimer(config_.statsFlushInterval());
@@ -216,26 +204,26 @@ void StrategyHostInstanceImpl::initialize(const Server::Options& options,
 
   ENVOY_LOG(info, "statically linked extensions:");
   ENVOY_LOG(info, "  access_loggers: {}",
-            Registry::FactoryRegistry<Configuration::AccessLogInstanceFactory>::allFactoryNames());
+            Registry::FactoryRegistry<Server::Configuration::AccessLogInstanceFactory>::allFactoryNames());
   ENVOY_LOG(
       info, "  filters.http: {}",
-      Registry::FactoryRegistry<Configuration::NamedHttpFilterConfigFactory>::allFactoryNames());
+      Registry::FactoryRegistry<Server::Configuration::NamedHttpFilterConfigFactory>::allFactoryNames());
   ENVOY_LOG(info, "  filters.listener: {}",
             Registry::FactoryRegistry<
-                Configuration::NamedListenerFilterConfigFactory>::allFactoryNames());
+                Server::Configuration::NamedListenerFilterConfigFactory>::allFactoryNames());
   ENVOY_LOG(
       info, "  filters.network: {}",
-      Registry::FactoryRegistry<Configuration::NamedNetworkFilterConfigFactory>::allFactoryNames());
+      Registry::FactoryRegistry<Server::Configuration::NamedNetworkFilterConfigFactory>::allFactoryNames());
   ENVOY_LOG(info, "  stat_sinks: {}",
-            Registry::FactoryRegistry<Configuration::StatsSinkFactory>::allFactoryNames());
+            Registry::FactoryRegistry<Server::Configuration::StatsSinkFactory>::allFactoryNames());
   ENVOY_LOG(info, "  tracers: {}",
-            Registry::FactoryRegistry<Configuration::TracerFactory>::allFactoryNames());
+            Registry::FactoryRegistry<Server::Configuration::TracerFactory>::allFactoryNames());
   ENVOY_LOG(info, "  transport_sockets.downstream: {}",
             Registry::FactoryRegistry<
-                Configuration::DownstreamTransportSocketConfigFactory>::allFactoryNames());
+                Server::Configuration::DownstreamTransportSocketConfigFactory>::allFactoryNames());
   ENVOY_LOG(info, "  transport_sockets.upstream: {}",
             Registry::FactoryRegistry<
-                Configuration::UpstreamTransportSocketConfigFactory>::allFactoryNames());
+                Server::Configuration::UpstreamTransportSocketConfigFactory>::allFactoryNames());
 
   // Enable the selected buffer implementation (old libevent evbuffer version or new native
   // version) early in the initialization, before any buffers can be created.
@@ -244,7 +232,7 @@ void StrategyHostInstanceImpl::initialize(const Server::Options& options,
             Buffer::OwnedImpl().usesOldImpl() ? "old (libevent)" : "new");
 
   // Handle configuration that needs to take place prior to the main configuration load.
-  InstanceUtil::loadBootstrapConfig(bootstrap_, options,
+  Server::InstanceUtil::loadBootstrapConfig(bootstrap_, options,
                                     messageValidationContext().staticValidationVisitor(), *api_);
   bootstrap_config_update_time_ = time_source_.systemTime();
 
@@ -261,8 +249,8 @@ void StrategyHostInstanceImpl::initialize(const Server::Options& options,
   stats_store_.setStatsMatcher(Config::Utility::createStatsMatcher(bootstrap_));
 
   const std::string server_stats_prefix = "server.";
-  server_stats_ = std::make_unique<ServerStats>(
-      ServerStats{ALL_SERVER_STATS(POOL_COUNTER_PREFIX(stats_store_, server_stats_prefix),
+  server_stats_ = std::make_unique<Server::ServerStats>(
+      Server::ServerStats{ALL_SERVER_STATS(POOL_COUNTER_PREFIX(stats_store_, server_stats_prefix),
                                    POOL_GAUGE_PREFIX(stats_store_, server_stats_prefix),
                                    POOL_HISTOGRAM_PREFIX(stats_store_, server_stats_prefix))});
   validation_context_.static_warning_validation_visitor().setCounter(

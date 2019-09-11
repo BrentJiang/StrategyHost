@@ -51,20 +51,20 @@ envoy_cc_library(
 
 envoy_cc_library(
     name = "framework_main_entry_lib",
-    srcs = ["main.cc"],
+    srcs = ["framework.cc"],
     external_deps = [
         "abseil_symbolize",
     ],
     deps = [
-        ":framework_main_common_lib",
+        ":main_framework_lib",
         "//source/exe:platform_impl_lib",
     ],
 )
 
 envoy_cc_library(
-    name = "framework_main_common_lib",
-    srcs = ["main_common.cc"],
-    hdrs = ["main_common.h"],
+    name = "main_framework_lib",
+    srcs = ["main_framework.cc"],
+    hdrs = ["main_framework.h"],
     deps = [
         ":framework_common_lib",
         "//source/exe:platform_impl_lib",

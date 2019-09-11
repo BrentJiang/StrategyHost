@@ -4,9 +4,13 @@ load(
     "//bazel:envoy_build_system.bzl",
     "envoy_cc_library",
     "envoy_package",
-    "envoy_proto_library",
-    "envoy_select_hot_restart",
 )
+load(
+    "//source/extensions:all_extensions.bzl",
+    "envoy_all_extensions",
+    "envoy_windows_extensions",
+)
+load("//bazel:repositories.bzl", "NOBORINGSSL_SKIP_TARGETS", "PPC_SKIP_TARGETS")
 
 envoy_package()
 
@@ -66,6 +70,7 @@ envoy_cc_library(
         "//source/common/upstream:health_discovery_service_lib",
         "//source/server:overload_manager_lib",
         "//source/server/http:admin_lib",
+        "//source/server:server_lib",
         "@envoy_api//envoy/config/bootstrap/v2:bootstrap_cc",
     ],
 )

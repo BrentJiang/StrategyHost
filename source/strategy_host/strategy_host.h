@@ -38,6 +38,7 @@
 #include "server/listener_manager_impl.h"
 #include "server/overload_manager_impl.h"
 #include "server/worker_impl.h"
+#include "server/server.h"
 
 #include "absl/container/node_hash_map.h"
 #include "absl/types/optional.h"
@@ -121,7 +122,7 @@ private:
   void flushStats();
   void flushStatsInternal();
   void initialize(const Server::Options& options, Network::Address::InstanceConstSharedPtr local_address,
-                  Server::ComponentFactory& component_factory, Server::ListenerHooks& hooks);
+                  Server::ComponentFactory& component_factory, ListenerHooks& hooks);
   void loadServerFlags(const absl::optional<std::string>& flags_path);
   void startWorkers();
   void terminate();
@@ -147,7 +148,7 @@ private:
   const time_t start_time_;
   time_t original_start_time_;
   Stats::StoreRoot& stats_store_;
-  std::unique_ptr<ServerStats> server_stats_;
+  std::unique_ptr<Server::ServerStats> server_stats_;
   Assert::ActionRegistrationPtr assert_action_registration_;
   ThreadLocal::Instance& thread_local_;
   Api::ApiPtr api_;

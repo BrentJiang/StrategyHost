@@ -25,12 +25,20 @@
 
 namespace Envoy {
 
+class FrameworkComponentFactory : public Server::ComponentFactory {
+public:
+  // Server::DrainManagerFactory
+  Server::DrainManagerPtr createDrainManager(Server::Instance& server) override;
+  Runtime::LoaderPtr createRuntime(Server::Instance& server,
+                                   Server::Configuration::Initial& config) override;
+};
+
 class StrategyHostCommonBase {
 public:
   // Consumer must guarantee that all passed references are alive until this object is
   // destructed.
-  StrategyHostCommonBase(const Server::OptionsImpl& options, Event::TimeSystem& time_system,
-                 Server::ListenerHooks& listener_hooks, Server::ComponentFactory& component_factory,
+  StrategyHostCommonBase(const Envoy::OptionsImpl& options, Event::TimeSystem& time_system,
+                 ListenerHooks& listener_hooks, Server::ComponentFactory& component_factory,
                  std::unique_ptr<Runtime::RandomGenerator>&& random_generator,
                  Thread::ThreadFactory& thread_factory, Filesystem::Instance& file_system,
                  std::unique_ptr<ProcessContext> process_context);
@@ -71,7 +79,7 @@ protected:
   std::unique_ptr<Server::HotRestart> restarter_;
   std::unique_ptr<Stats::ThreadLocalStoreImpl> stats_store_;
   std::unique_ptr<Logger::Context> logging_context_;
-  std::unique_ptr<Server::InstanceImpl> server_;
+  std::unique_ptr<StrategyHost::StrategyHostInstanceImpl> server_;
 
 private:
   void configureComponentLogLevels();
@@ -118,7 +126,7 @@ private:
   Envoy::OptionsImpl options_;
   Event::RealTimeSystem real_time_system_;
   DefaultListenerHooks default_listener_hooks_;
-  ProdComponentFactory prod_component_factory_;
+  Envoy::FrameworkComponentFactory prod_component_factory_;
   StrategyHostCommonBase base_;
 };
 

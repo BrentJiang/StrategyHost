@@ -1,4 +1,4 @@
-#include "framework/main_common.h"
+#include "framework/main_framework.h"
 
 #include "absl/debugging/symbolize.h"
 
@@ -17,13 +17,13 @@ int main(int argc, char** argv) {
   // handling, such as running in a chroot jail.
   absl::InitializeSymbolizer(argv[0]);
 #endif
-  std::unique_ptr<Envoy::MainCommon> main_common;
+  std::unique_ptr<Envoy::StrategyHostCommon> main_common;
 
   // Initialize the server's main context under a try/catch loop and simply return EXIT_FAILURE
   // as needed. Whatever code in the initialization path that fails is expected to log an error
   // message so the user can diagnose.
   try {
-    main_common = std::make_unique<Envoy::MainCommon>(argc, argv);
+    main_common = std::make_unique<Envoy::StrategyHostCommon>(argc, argv);
   } catch (const Envoy::NoServingException& e) {
     return EXIT_SUCCESS;
   } catch (const Envoy::MalformedArgvException& e) {
