@@ -2,7 +2,7 @@
 
 if [[ "$(uname -m)" == "x86_64" ]]; then
   # buildifier
-  VERSION=0.28.0
+  VERSION=0.29.1
   SHA256=3d474be62f8e18190546881daf3c6337d857bf371faf23f508e9b456b0244267
   curl --location --output /usr/local/bin/buildifier https://github.com/bazelbuild/buildtools/releases/download/"$VERSION"/buildifier \
     && echo "$SHA256  /usr/local/bin/buildifier" | sha256sum --check \
