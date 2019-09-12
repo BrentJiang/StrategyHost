@@ -85,3 +85,29 @@ envoy_cc_library(
         ],
     }),
 )
+
+alias(
+    name = "ctp_preinsert",
+    actual = ":ctp_preinsert-static",
+)
+
+envoy_cc_binary(
+    name = "ctp_preinsert-static",
+    stamped = True,
+    deps = ["ctp_preinsert_main_entry_lib"],
+)
+
+envoy_cc_library(
+    name = "ctp_preinsert_main_entry_lib",
+    srcs = ["ctp_preinsert_app.cc"],
+    external_deps = [
+        "abseil_symbolize",
+    ],
+    deps = [
+        "//source/exe:platform_impl_lib",
+        "//source/common/common:logger_lib",
+        "//source/common/common:empty_string",
+        "//source/common/common:utility_lib",
+        "//source/strategy_host:ctp_preinsert_lib",
+    ],
+)

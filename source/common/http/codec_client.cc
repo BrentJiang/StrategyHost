@@ -17,6 +17,7 @@ CodecClient::CodecClient(Type type, Network::ClientConnectionPtr&& connection,
                          Event::Dispatcher& dispatcher)
     : type_(type), connection_(std::move(connection)), host_(host),
       idle_timeout_(host_->cluster().idleTimeout()) {
+  ENVOY_LOG(warn,"(jsy) start CodecClient::CodecClient");
   // Make sure upstream connections process data and then the FIN, rather than processing
   // TCP disconnects immediately. (see https://github.com/envoyproxy/envoy/issues/1679 for details)
   connection_->detectEarlyCloseWhenReadDisabled(false);

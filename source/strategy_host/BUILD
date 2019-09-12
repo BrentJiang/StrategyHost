@@ -15,6 +15,23 @@ load("//bazel:repositories.bzl", "NOBORINGSSL_SKIP_TARGETS", "PPC_SKIP_TARGETS")
 envoy_package()
 
 envoy_cc_library(
+    name = "ctp_preinsert_lib",
+    srcs = ["ctp_preinsert.cc"],
+    hdrs = ["ctp_preinsert.h"],
+    external_deps = [
+        "abseil_node_hash_map",
+        "abseil_optional",
+    ],
+    deps = [
+        "//source/server:options_lib",
+        "//source/common/common:logger_lib",
+        "//source/common/common:minimal_logger_lib",
+        "//source/common/common:linked_object",
+        "//source/common/event:real_time_system_lib",
+    ],
+)
+
+envoy_cc_library(
     name = "strategy_host_lib",
     srcs = ["strategy_host.cc"],
     hdrs = ["strategy_host.h"],

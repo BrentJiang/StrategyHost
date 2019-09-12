@@ -53,7 +53,7 @@ def _envoy_rbe_toolchain(name, env, toolchain_config_spec_name):
         env = env,
         toolchain_config_spec_name = toolchain_config_spec_name,
         toolchain_config_suite_spec = _TOOLCHAIN_CONFIG_SUITE_SPEC,
-        use_checked_in_confs = "False",
+        use_checked_in_confs = "Try",
     )
 
     rbe_autoconfig(

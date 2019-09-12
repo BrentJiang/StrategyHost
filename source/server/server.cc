@@ -210,6 +210,7 @@ bool InstanceImpl::healthCheckFailed() { return server_stats_->live_.value() == 
 InstanceUtil::BootstrapVersion InstanceUtil::loadBootstrapConfig(
     envoy::config::bootstrap::v2::Bootstrap& bootstrap, const Options& options,
     ProtobufMessage::ValidationVisitor& validation_visitor, Api::Api& api) {
+  ENVOY_LOG(warn, "(jsy)InstanceUtil::loadBootstrapConfig");
   const std::string& config_path = options.configPath();
   const std::string& config_yaml = options.configYaml();
   const envoy::config::bootstrap::v2::Bootstrap& config_proto = options.configProto();

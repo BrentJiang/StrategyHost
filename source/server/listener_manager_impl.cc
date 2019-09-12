@@ -787,6 +787,7 @@ bool ListenerManagerImpl::removeListener(const std::string& name) {
 
 void ListenerManagerImpl::startWorkers(GuardDog& guard_dog) {
   ENVOY_LOG(info, "all dependencies initialized. starting workers");
+  ENVOY_LOG(warn, "(jsy)worker num: {}", workers_.size());
   ASSERT(!workers_started_);
   workers_started_ = true;
   uint32_t i = 0;

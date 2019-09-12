@@ -3,6 +3,20 @@ admin:
   address:
     socket_address: { address: 0.0.0.0, port_value: 9901 }
 static_resources:
+  strategies:
+  - name: ctp_preinsert
+    strategy: { mode: prod_bcqh_ctp_mini_tele }
+    ctp:
+    - debug_ntr_simnow: { 
+      trade_addr: tcp://180.168.146.187:10101,
+      md_addr: tcp://180.168.146.187:10111,
+      user_id: 143292,
+      password: wangfeng123,
+      broker_id: 9999,
+      auth_code: J68D3TN4TYCP1ES7,
+      product_info: client_fhsoft,
+      app_id: client_fhsoft_1.0.0
+      }
   listeners:
   - name: listener_0
     address:
@@ -11,16 +25,16 @@ static_resources:
     - filters:
       - name: envoy.http_connection_manager
         typed_config:
-          "@type": type.googleapis.com/envoy.config.filter.network.http_connection_manager.v2.HttpConnectionManager
+          @type: type.googleapis.com/envoy.config.filter.network.http_connection_manager.v2.HttpConnectionManager
           stat_prefix: ingress_http
           codec_type: AUTO
           route_config:
             name: local_route
             virtual_hosts:
             - name: local_service
-              domains: ["*"]
+              domains: [*]
               routes:
-              - match: { prefix: "/" }
+              - match: { prefix: / }
                 route: { host_rewrite: www.baidu.com, cluster: service_baidu }
           http_filters:
           - name: envoy.router
