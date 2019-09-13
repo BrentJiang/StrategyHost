@@ -21,24 +21,24 @@ static_resources:
               domains: ["*"]
               routes:
               - match: { prefix: "/" }
-                route: { host_rewrite: www.baidu.com, cluster: service_baidu }
+                route: { host_rewrite: www.bing.com, cluster: service_bing }
           http_filters:
           - name: envoy.router
   clusters:
-  - name: service_baidu
+  - name: service_bing
     connect_timeout: 0.25s
     type: LOGICAL_DNS
     # Comment out the following line to test on v6 networks
     dns_lookup_family: V4_ONLY
     lb_policy: ROUND_ROBIN
     load_assignment:
-      cluster_name: service_baidu
+      cluster_name: service_bing
       endpoints:
       - lb_endpoints:
         - endpoint:
             address:
               socket_address:
-                address: www.baidu.com
-                port_value: 80
+                address: www.bing.com
+                port_value: 443
     tls_context:
-      sni: www.baidu.com
+      sni: www.bing.com

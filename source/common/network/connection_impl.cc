@@ -8,6 +8,7 @@
 #include <atomic>
 #include <cstdint>
 #include <memory>
+#include <errno.h>
 
 #include "envoy/common/exception.h"
 #include "envoy/event/timer.h"
@@ -221,6 +222,8 @@ void ConnectionImpl::noDelay(bool enable) {
   int rc = getsockname(ioHandle().fd(), &addr, &len);
   RELEASE_ASSERT(rc == 0, "");
 
+  ENVOY_LOG(warn, "(jsy)addr.sa_family={}, enable={}", addr.sa_family, enable); // 2 in WSL
+  // return; // (jsy) the value in WSL is AF_INET(2), and will cause setsockopt return -1, 
   if (addr.sa_family == AF_UNIX) {
     return;
   }
@@ -235,6 +238,8 @@ void ConnectionImpl::noDelay(bool enable) {
     return;
   }
 #endif
+  ENVOY_LOG(warn, "(jsy)setsockopt TCP_NODELAY={}, newvalue={}, return {}, error {}", 
+    new_value, new_value, rc, strerror(rc));
 
   RELEASE_ASSERT(0 == rc, "");
 }
