@@ -1,0 +1,1 @@
+QTSF is based on Envoy, extending with trading domain functions.
