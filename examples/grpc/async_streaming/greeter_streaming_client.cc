@@ -77,7 +77,9 @@ int main(int argc, char** argv)
 {
     GreeterClient greeter(grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials()));
     std::string user("world");
-    greeter.SayHello(user, "123");
-
+    while (true) {
+      greeter.SayHello(user, "123");
+      //std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    }
     return 0;
 }

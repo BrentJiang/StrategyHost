@@ -36,6 +36,10 @@ MultiGreeter::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& chann
   return ::grpc::internal::ClientReaderFactory< ::hellostreamingworld::HelloReply>::Create(channel_.get(), rpcmethod_sayHello_, context, request);
 }
 
+void MultiGreeter::Stub::experimental_async::sayHello(::grpc::ClientContext* context, ::hellostreamingworld::HelloRequest* request, ::grpc::experimental::ClientReadReactor< ::hellostreamingworld::HelloReply>* reactor) {
+  ::grpc::internal::ClientCallbackReaderFactory< ::hellostreamingworld::HelloReply>::Create(stub_->channel_.get(), stub_->rpcmethod_sayHello_, context, request, reactor);
+}
+
 ::grpc::ClientAsyncReader< ::hellostreamingworld::HelloReply>* MultiGreeter::Stub::AsyncsayHelloRaw(::grpc::ClientContext* context, const ::hellostreamingworld::HelloRequest& request, ::grpc::CompletionQueue* cq, void* tag) {
   return ::grpc::internal::ClientAsyncReaderFactory< ::hellostreamingworld::HelloReply>::Create(channel_.get(), cq, rpcmethod_sayHello_, context, request, true, tag);
 }

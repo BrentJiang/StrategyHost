@@ -25,6 +25,7 @@
 #include <grpcpp/impl/codegen/async_generic_service.h>
 #include <grpcpp/impl/codegen/async_stream.h>
 #include <grpcpp/impl/codegen/async_unary_call.h>
+#include <grpcpp/impl/codegen/client_callback.h>
 #include <grpcpp/impl/codegen/method_handler_impl.h>
 #include <grpcpp/impl/codegen/proto_utils.h>
 #include <grpcpp/impl/codegen/rpc_method.h>
@@ -34,11 +35,17 @@
 #include <grpcpp/impl/codegen/stub_options.h>
 #include <grpcpp/impl/codegen/sync_stream.h>
 
-namespace grpc {
+namespace grpc_impl {
 class CompletionQueue;
-class Channel;
 class ServerCompletionQueue;
 class ServerContext;
+}  // namespace grpc_impl
+
+namespace grpc {
+namespace experimental {
+template <typename RequestT, typename ResponseT>
+class MessageAllocator;
+}  // namespace experimental
 }  // namespace grpc
 
 namespace hellostreamingworld {
@@ -66,6 +73,7 @@ class MultiGreeter final {
      public:
       virtual ~experimental_async_interface() {}
       // Sends multiple greetings
+      virtual void sayHello(::grpc::ClientContext* context, ::hellostreamingworld::HelloRequest* request, ::grpc::experimental::ClientReadReactor< ::hellostreamingworld::HelloReply>* reactor) = 0;
     };
     virtual class experimental_async_interface* experimental_async() { return nullptr; }
   private:
@@ -88,6 +96,7 @@ class MultiGreeter final {
     class experimental_async final :
       public StubInterface::experimental_async_interface {
      public:
+      void sayHello(::grpc::ClientContext* context, ::hellostreamingworld::HelloRequest* request, ::grpc::experimental::ClientReadReactor< ::hellostreamingworld::HelloReply>* reactor) override;
      private:
       friend class Stub;
       explicit experimental_async(Stub* stub): stub_(stub) { }
@@ -140,6 +149,9 @@ class MultiGreeter final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     ExperimentalWithCallbackMethod_sayHello() {
+      ::grpc::Service::experimental().MarkMethodCallback(0,
+        new ::grpc::internal::CallbackServerStreamingHandler< ::hellostreamingworld::HelloRequest, ::hellostreamingworld::HelloReply>(
+          [this] { return this->sayHello(); }));
     }
     ~ExperimentalWithCallbackMethod_sayHello() override {
       BaseClassMustBeDerivedFromService(this);
@@ -149,6 +161,9 @@ class MultiGreeter final {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
+    virtual ::grpc::experimental::ServerWriteReactor< ::hellostreamingworld::HelloRequest, ::hellostreamingworld::HelloReply>* sayHello() {
+      return new ::grpc::internal::UnimplementedWriteReactor<
+        ::hellostreamingworld::HelloRequest, ::hellostreamingworld::HelloReply>;}
   };
   typedef ExperimentalWithCallbackMethod_sayHello<Service > ExperimentalCallbackService;
   template <class BaseClass>
@@ -194,6 +209,9 @@ class MultiGreeter final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     ExperimentalWithRawCallbackMethod_sayHello() {
+      ::grpc::Service::experimental().MarkMethodRawCallback(0,
+        new ::grpc::internal::CallbackServerStreamingHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+          [this] { return this->sayHello(); }));
     }
     ~ExperimentalWithRawCallbackMethod_sayHello() override {
       BaseClassMustBeDerivedFromService(this);
@@ -203,6 +221,9 @@ class MultiGreeter final {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
+    virtual ::grpc::experimental::ServerWriteReactor< ::grpc::ByteBuffer, ::grpc::ByteBuffer>* sayHello() {
+      return new ::grpc::internal::UnimplementedWriteReactor<
+        ::grpc::ByteBuffer, ::grpc::ByteBuffer>;}
   };
   typedef Service StreamedUnaryService;
   template <class BaseClass>
