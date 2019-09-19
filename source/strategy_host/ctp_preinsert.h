@@ -5,6 +5,9 @@
 #include <mutex>
 #include <memory>
 
+#include "log4z.h"
+using namespace zsummer::log4z;
+
 #include "common/common/logger.h"
 
 #include "server/options_impl.h"

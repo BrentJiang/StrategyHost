@@ -1,0 +1,139 @@
+/*
+ * Copyright 2019 The TFZQ Authors. All rights reserved.
+ */
+
+syntax = "proto3";
+
+package order_router
+
+import "google/protobuf/timestamp.proto";
+
+import "validate/validate.proto";
+
+enum Direction {
+    Buy = 0;
+    Sell = 1;
+}
+
+enum OffsetFlag {
+    Open = '0';
+    Close = '1';
+    ForceClose = '2';
+    CloseToday = '3';
+    CloseYesterday = '4';
+    ForceOff = '5';
+    LocalForceClose = '6';
+}
+
+enum OrderStatus {
+    AllTraded = '0';
+    PartTradedQueueing = '1';
+    PartTradedNotQueueing = '2';
+    NoTradeQueueing = '3';
+    NoTradeNotQueueing = '4';
+    Canceled = '5';
+    Unknown = 'a';
+    NotTouched = 'b';
+    Touched = 'c';
+}
+
+message OrderReq {
+    int32 InvestorID = 1;
+    string InstrumentID = 2;
+    string ExchangeID = 3;
+    string OrderPriceType = 4;
+    string Direction = 5;
+    string CombHedgeFlag = 6;
+    string CoveredFlag = 7;
+    string LimitPrice = 8;
+    string VolumeTotalOriginal = 9;
+    string TimeCondition = 10;
+    string VolumeCondition = 11;
+    string MinVolume = 12;
+    string ContingentCondition = 13;
+    string StopPrice = 14;
+    string ThirdReff1 = 15;
+    string ThirdReff2 = 16;
+    string OrderLocalID = 17;
+    string Remark = 18;
+    string CancelFlag = 19;
+    string OrderIP = 20;
+    string OrderMAC = 21;
+    string OrderHDNum = 22;
+    string OrderMacCode = 23;
+    string OrderOS = 24;
+    string OrderRef = 25;
+    string CombOffsetFlag = 26;
+    string ProductClass = 27;
+    string SubProductClass = 28;
+    string LimitDealAmount = 29;
+    int64 ORRequestID = 30;
+}
+
+message OrderCancelReq {
+    int32 InvestorID = 1;
+    string OrderSysID = 2;
+    string OrderLocalID = 3;
+    string InstrumentID = 4;
+    string OrderRef = 5;
+    string OrderActionRef = 6;
+    string ExchangeID = 7;
+    string RefOrderLocalID = 8;
+    string CounterOrderID = 9;
+    string ProductClass = 10;
+    string SubProductClass = 11;
+    int64 ORRequestID = 12;
+    int64 RefORRequestID = 13;
+}
+
+message Order {
+    int64 ORRequestID = 1;
+    string TradingDay = 2;
+    string InvestorID = 3;
+    string OrderRef = 4;
+    string ExchangeID = 5;
+    string SeatID = 6;
+    string OrderLocalID = 7;
+    string Direction = 8;
+    string TradeCode = 9;
+    string BranchID = 10;
+    string InstrumentID = 11;
+    string OrderPriceType = 12;
+    string CombHedgeFlag = 13;
+    string CoveredFlag = 14;
+    string LimitPrice = 15;
+    string VolumeTotalOriginal = 16;
+    string TimeCondition = 17;
+    string VolumeCondition = 18;
+    string MinVolume = 19;
+    string ContingentCondition = 20;
+    string StopPrice = 21;
+    string OrderSysID = 22;
+    string OrderStatus = 23;
+    string OrderType = 24;
+    string VolumeTraded = 25;
+    string AmountTraded = 26;
+    string VolumeRemain = 27;
+    string InsertDate = 28;
+    string InsertTime = 29;
+    string UpdateTime = 30;
+    string CancelTime = 31;
+    string StatusMsg = 32;
+    string OwnerType = 33;
+    string ThirdReff1 = 34;
+    string ThirdReff2 = 35;
+    string ORRequestID = 36;
+    string VolumeCanceled = 37;
+    string Remark = 38;
+    string CancelFlag = 39;
+    string OrderIP = 40;
+    string OrderMAC = 41;
+    string OrderHDNum = 42;
+    string OrderMacCode = 43;
+    string OrderOS = 44;
+    string ProductClass = 45;
+    string CounterOrderID = 46;
+    string CombOffsetFlag = 47;
+    string LimitDealAmount = 48;
+    string SubProductClass = 49;
+}

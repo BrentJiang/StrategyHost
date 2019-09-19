@@ -1,0 +1,25 @@
+/*
+ * Copyright 2019 The TFZQ Authors. All rights reserved.
+ */
+
+syntax = "proto3";
+
+package order_router
+
+import "google/protobuf/timestamp.proto";
+
+import "validate/validate.proto";
+
+import "order_router.proto"
+
+message ExecSnapOrder {
+    string ORRequestID = 1;
+    google.protobuf.Timestamp TriggerInsert = 2;
+    google.protobuf.Duration  InsertDelta = 3;
+    int64 InsertTimes = 4;
+    int64 ExecTimes = 5;
+    // TriggerCancel is the time to cancel, can use 
+    google.protobuf.Timestamp TriggerCancel = 6;
+    bool CancelOnTrade = 7;
+    bool CloseOnTrade = 8;
+}

@@ -44,8 +44,8 @@ envoy_cc_library(
 
 envoy_cc_library(
     name = "main_strategy_host_lib",
-    srcs = ["main_strategy_host.cc"],
-    hdrs = ["main_strategy_host.h"],
+    srcs = ["main_common.cc"],
+    hdrs = ["main_common.h"],
     deps = [
         ":strategy_host_common_lib",
         "//source/exe:platform_impl_lib",
@@ -187,5 +187,6 @@ envoy_cc_library(
         "//source/common/common:empty_string",
         "//source/common/common:utility_lib",
         "//source/strategy_host:ctp_preinsert_lib",
+        "//source/order_router:order_router_lib",
     ],
 )
